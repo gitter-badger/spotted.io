@@ -8,5 +8,9 @@ html(lang='en')
       link(rel='stylesheet', href='/css/style.css')
     block js
       script(src='http://localhost:35729/livereload.js')
+      script(src='/components/jquery/dist/jquery.min.js')
+      script(src="http://localhost:3001/socket.io/socket.io.js")
+      script(src="/js/lobby.js")
+      
   body
     block content

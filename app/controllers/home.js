@@ -21,9 +21,9 @@ function getLobby(req, res, next) {
     if(err) res.send(400,err);
     else if(lobby) res.render('lobby',lobby);
     else {
-      Lobby.insert({title:title}, function(err){
+      Lobby.create({title:title}, function(err, lobby){
         if(err) res.send(400,err);
-        else res.send(200);
+        else res.render('lobby',lobby);
       });
     }
   })

@@ -18,13 +18,14 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
 io.on('connection', function (socket) {
+  console.log("User connected");
   socket.on('post', function(data, fn){
     var lobby = data.lobby,
       message = data.msg;
 
     Lobby.update({id:lobby}, {$addToSet: {message:message}}, function(err){
       if(!err){
-        socket.emit('message', {lobby:lobby, message:message});
+        socket.emit('message-'+lobby, {message:message});
       }
     });
   });
@@ -32,4 +33,5 @@ io.on('connection', function (socket) {
 
 require('./config/express')(app, config);
 
+server.listen(3001);
 app.listen(config.port);
