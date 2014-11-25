@@ -14,8 +14,9 @@ models.forEach(function (model) {
   require(model);
 });
 var app = express();
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
 
 require('./config/express')(app, config);
 
 app.listen(config.port);
-
