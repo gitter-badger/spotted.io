@@ -18,7 +18,16 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
 io.on('connection', function (socket) {
-  console.log('connection');
+  socket.on('post', function(data, fn){
+    var lobby = data.lobby,
+      message = data.msg;
+
+    Lobby.update({id:lobby}, {$addToSet: {message:message}}, function(err){
+      if(!err){
+        socket.emit('message', {lobby:lobby, message:message});
+      }
+    });
+  });
 });
 
 require('./config/express')(app, config);

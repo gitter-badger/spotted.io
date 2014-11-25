@@ -8,28 +8,23 @@ module.exports = function (app) {
 };
 
 router.get('/', home);
-router.get('/lobby/:id', getLobby);
-router.post('/lobby', addLobby);
+router.get('/lobby/:title', getLobby);
 
 function home(req, res, next) {
   res.send(200);
 }
 
-function addLobby(req, res, next){
+function getLobby(req, res, next) {
   var title = req.param('title');
 
-  Lobby.insert({title:title}, function(err){
+  Lobby.findOne({title:title}, function(err, lobby){
     if(err) res.send(400,err);
-    else res.send(200);
-  })
-}
-
-function getLobby(req, res, next) {
-  var id = req.param('id');
-
-  Lobby.findOne({id:id}, function(err, lobby){
-    if(err) res.send(400,err);
-    else if(lobby) res.send(200,lobby);
-    else res.send(404);
+    else if(lobby) res.render('lobby',lobby);
+    else {
+      Lobby.insert({title:title}, function(err){
+        if(err) res.send(400,err);
+        else res.send(200);
+      });
+    }
   })
 }
