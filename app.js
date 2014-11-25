@@ -18,14 +18,15 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
 io.on('connection', function (socket) {
-  console.log("User connected");
-  socket.on('post', function(data, fn){
-    var lobby = data.lobby,
-      message = data.msg;
+  var lobbyId = socket.handshake.query.lobbyId;
+  socket.join(lobbyId);
 
-    Lobby.update({id:lobby}, {$addToSet: {message:message}}, function(err){
+  socket.on('post', function(data, fn){
+    var message = data.message;
+
+    mongoose.model('Lobby').findOneAndUpdate({_id:lobbyId}, {$push: {posts:{message:message}}}, function(err,model){
       if(!err){
-        socket.emit('message-'+lobby, {message:message});
+        socket.broadcast.to(lobbyId).emit('message', {message:message});
       }
     });
   });

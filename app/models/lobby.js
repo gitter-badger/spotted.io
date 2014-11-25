@@ -5,7 +5,7 @@ var mongoose = require('mongoose'),
 
 var LobbySchema = new Schema({
   title: String,
-  posts: [{title:String}]
+  posts: [{message:String}]
 });
 
 mongoose.model('Lobby', LobbySchema);
