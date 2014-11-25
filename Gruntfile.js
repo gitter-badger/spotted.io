@@ -14,7 +14,7 @@ module.exports = function (grunt) {
     pkg: grunt.file.readJSON('package.json'),
     develop: {
       server: {
-        file: 'bin/www'
+        file: 'app.js'
       }
     },
     watch: {
@@ -22,19 +22,13 @@ module.exports = function (grunt) {
         nospawn: true,
         livereload: reloadPort
       },
-      server: {
+      js: {
         files: [
-          'bin/www',
           'app.js',
-          'routes/*.js'
+          'app/**/*.js',
+          'config/*.js'
         ],
         tasks: ['develop', 'delayed-livereload']
-      },
-      js: {
-        files: ['public/js/*.js'],
-        options: {
-          livereload: reloadPort
-        }
       },
       css: {
         files: [
@@ -45,33 +39,33 @@ module.exports = function (grunt) {
         }
       },
       views: {
-        files: ['views/*.jade'],
-        options: {
-          livereload: reloadPort
-        }
+        files: [
+          'app/views/*.jade',
+          'app/views/**/*.jade'
+        ],
+        options: { livereload: reloadPort }
       }
     }
   });
 
-  grunt.config.requires('watch.server.files');
-  files = grunt.config('watch.server.files');
+  grunt.config.requires('watch.js.files');
+  files = grunt.config('watch.js.files');
   files = grunt.file.expand(files);
 
   grunt.registerTask('delayed-livereload', 'Live reload after the node server has restarted.', function () {
     var done = this.async();
     setTimeout(function () {
-      request.get('http://localhost:' + reloadPort + '/changed?files=' + files.join(','),  function (err, res) {
+      request.get('http://localhost:' + reloadPort + '/changed?files=' + files.join(','),  function(err, res) {
           var reloaded = !err && res.statusCode === 200;
-          if (reloaded) {
+          if (reloaded)
             grunt.log.ok('Delayed live reload successful.');
-          } else {
+          else
             grunt.log.error('Unable to make a delayed live reload.');
-          }
           done(reloaded);
         });
     }, 500);
   });
-  
+
   grunt.registerTask('default', [
     'develop', 
     'watch'
